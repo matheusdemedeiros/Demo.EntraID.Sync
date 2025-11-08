@@ -37,23 +37,30 @@ namespace Importer.WorkerService
 
                 var tasks = enterprises.Select(async enterprise =>
                 {
-                    var enterpriseKey = "FAKE_ENTERPRISE_KEY";
+                    // Aqui pegamos a chave/ID real da empresa para logs e persistência
+                    var enterpriseKey = enterprise.Key;
 
                     try
                     {
-                        _logger.LogInformation("Iniciando importação do tenant {enterpriseKey}", enterpriseKey);
+                        _logger.LogInformation(
+                            "Iniciando importação para empresa {enterpriseKey}",
+                            enterpriseKey
+                        );
 
                         await _importService.ProcessEnterpriseAsync(enterpriseKey, stoppingToken);
 
-                        _logger.LogInformation("Empresa {enterpriseKey} importado com sucesso!", enterpriseKey);
+                        _logger.LogInformation(
+                            "Empresa {enterpriseKey} importada com sucesso",
+                            enterpriseKey
+                        );
                     }
                     catch (Exception ex)
                     {
                         _logger.LogError(ex,
                             "Erro processando empresa {enterpriseKey}: {message}",
-                            enterprise.ToString(), ex.Message);
+                            enterpriseKey, ex.Message);
 
-                        await _enterpriseRepository.MarkEnterpriseSyncErrorAsync(enterpriseKey, ex);
+                        await _enterpriseRepository.MarkEnterpriseSyncErrorAsync(enterprise, ex);
                     }
                 });
 

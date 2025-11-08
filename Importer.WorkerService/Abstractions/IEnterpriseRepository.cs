@@ -8,7 +8,7 @@ namespace Importer.WorkerService.Abstractions
 {
     public interface IEnterpriseRepository
     {
-        Task<IEnumerable<object>> GetEnterprisesWithPendingFilesAsync(int mAX_PARALLEL_THREADS);
-        Task MarkEnterpriseSyncErrorAsync(object id, Exception ex);
+        Task<IEnumerable<Enterprise>> GetEnterprisesWithPendingFilesAsync(int MAX_PARALLEL_THREADS);
+        Task MarkEnterpriseSyncErrorAsync(Enterprise id, Exception ex);
     }
 }
