@@ -1,73 +1,91 @@
 using Importer.WorkerService.Abstractions;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using NLog;
 
 namespace Importer.WorkerService
 {
     public class Worker : BackgroundService
     {
         private readonly ILogger<Worker> _logger;
-        private readonly IEnterpriseRepository _enterpriseRepository;
-        private readonly IImportService _importService;
+        private readonly IServiceScopeFactory _scopeFactory;
         private readonly int MAX_PARALLEL_THREADS;
 
         public Worker(
             ILogger<Worker> logger,
             IConfiguration configuration,
-            IEnterpriseRepository enterpriseRepository,
-            IImportService importService)
+            IServiceScopeFactory scopeFactory)
         {
             _logger = logger;
-            _enterpriseRepository = enterpriseRepository;
-            _importService = importService;
+            _scopeFactory = scopeFactory;
 
             MAX_PARALLEL_THREADS = configuration.GetValue<int>("MaxParallelThreads", 1);
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            _logger.LogInformation(
+                "Worker iniciado. Maximo de importacoes paralelas permitidas: {maxParallel}",
+                MAX_PARALLEL_THREADS);
+
             while (!stoppingToken.IsCancellationRequested)
             {
-                var enterprises = await _enterpriseRepository
+                using var scope = _scopeFactory.CreateScope();
+
+                var enterpriseRepository = scope.ServiceProvider.GetRequiredService<IEnterpriseRepository>();
+                var importService = scope.ServiceProvider.GetRequiredService<IImportService>();
+
+                var enterprises = await enterpriseRepository
                     .GetEnterprisesWithPendingFilesAsync(MAX_PARALLEL_THREADS);
 
                 if (!enterprises.Any())
                 {
+                    _logger.LogDebug("Nenhuma empresa com arquivos pendentes encontrada. Aguardando...");
                     await Task.Delay(2000, stoppingToken);
                     continue;
                 }
 
+                _logger.LogInformation(
+                    "Iniciando importacao para {enterpriseCount} empresa(s).",
+                    enterprises.Count());
+
                 var tasks = enterprises.Select(async enterprise =>
                 {
-                    // Aqui pegamos a chave/ID real da empresa para logs e persistência
-                    var enterpriseKey = enterprise.Key;
-
-                    try
+                    using (NLog.ScopeContext.PushProperty("EnterpriseName", enterprise.Key))
                     {
-                        _logger.LogInformation(
-                            "Iniciando importação para empresa {enterpriseKey}",
-                            enterpriseKey
-                        );
+                        try
+                        {
+                            _logger.LogInformation(
+                                "Iniciando importacao para a empresa: {enterpriseKey} ({enterpriseName})",
+                                enterprise.Key, enterprise.Name);
 
-                        await _importService.ProcessEnterpriseAsync(enterpriseKey, stoppingToken);
+                            await importService.ProcessEnterpriseAsync(enterprise.Key, stoppingToken);
 
-                        _logger.LogInformation(
-                            "Empresa {enterpriseKey} importada com sucesso",
-                            enterpriseKey
-                        );
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(ex,
-                            "Erro processando empresa {enterpriseKey}: {message}",
-                            enterpriseKey, ex.Message);
+                            _logger.LogInformation(
+                                "Importacao concluida com sucesso para a empresa: {enterpriseKey} ({enterpriseName})",
+                                enterprise.Key, enterprise.Name);
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(
+                                ex,
+                                "Erro durante a importacao para a empresa: {enterpriseKey} ({enterpriseName}). Mensagem: {errorMessage}",
+                                enterprise.Key, enterprise.Name, ex.Message);
 
-                        await _enterpriseRepository.MarkEnterpriseSyncErrorAsync(enterprise, ex);
+                            await enterpriseRepository.MarkEnterpriseSyncErrorAsync(enterprise, ex);
+                        }
                     }
                 });
 
                 await Task.WhenAll(tasks);
 
+                _logger.LogInformation(
+                    "Ciclo finalizado. Aguardando antes da próxima verificacao de pendências.");
+
                 await Task.Delay(2000, stoppingToken);
             }
+
+            _logger.LogWarning("Worker finalizado pois o cancellation token foi solicitado.");
         }
     }
 }

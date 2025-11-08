@@ -1,0 +1,6 @@
+2025-11-08 17:37:34.9903 Warn Error has been raised. Exception: NLog.NLogConfigurationException: 'FileTarget' cannot assign unknown property 'writeBufferSize'='0'
+   at NLog.Config.LoggingConfigurationParser.SetPropertyValueFromString[T](T targetObject, String propertyName, String propertyValue, ValidatedConfigurationElement element)
+2025-11-08 17:37:35.0237 Warn Error has been raised. Exception: NLog.NLogConfigurationException: 'FileTarget' cannot assign unknown property 'writeBufferSize'='0'
+   at NLog.Config.LoggingConfigurationParser.SetPropertyValueFromString[T](T targetObject, String propertyName, String propertyValue, ValidatedConfigurationElement element)
+2025-11-08 17:37:35.0237 Warn Error has been raised. Exception: NLog.NLogConfigurationException: Unrecognized value 'condition'='('${event-properties:EnterpriseName}'!='')' for element 'logger' in section 'rules'
+2025-11-08 17:37:35.0292 Warn Error has been raised. Exception: NLog.NLogConfigurationException: Unrecognized value 'condition'='('${event-properties:EnterpriseName}'=='')' for element 'logger' in section 'rules'

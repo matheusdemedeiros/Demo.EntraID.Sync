@@ -9,5 +9,6 @@ namespace Importer.WorkerService
     public class Enterprise
     {
         public string Key { get; set; }
+        public string Name { get; set; }
     }
 }
