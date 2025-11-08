@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36511.14 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Conector.WorkerService", "Conector.WorkerService\Conector.WorkerService.csproj", "{3C52A1B4-6BA1-48FD-9A7B-2B708A748FBF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Importer.WorkerService", "Importer.WorkerService\Importer.WorkerService.csproj", "{64D6B4F5-7F23-475A-B382-96FE5A0B0B72}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3C52A1B4-6BA1-48FD-9A7B-2B708A748FBF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C52A1B4-6BA1-48FD-9A7B-2B708A748FBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C52A1B4-6BA1-48FD-9A7B-2B708A748FBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C52A1B4-6BA1-48FD-9A7B-2B708A748FBF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{64D6B4F5-7F23-475A-B382-96FE5A0B0B72}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64D6B4F5-7F23-475A-B382-96FE5A0B0B72}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64D6B4F5-7F23-475A-B382-96FE5A0B0B72}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64D6B4F5-7F23-475A-B382-96FE5A0B0B72}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {87A59864-7AC4-4310-98D2-578FBDCD5766}
+	EndGlobalSection
+EndGlobal
