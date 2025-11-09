@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Importer.WorkerService
 {
-    public class Enterprise
+    public class MyEnterprise
     {
         public string Key { get; set; }
         public string Name { get; set; }

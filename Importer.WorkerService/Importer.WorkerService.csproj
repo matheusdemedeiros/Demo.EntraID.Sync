@@ -12,6 +12,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.10" />
     <PackageReference Include="NLog.Extensions.Logging" Version="6.0.5" />
     <PackageReference Include="NLog.Web.AspNetCore" Version="6.0.5" />
+	<PackageReference Include="nddPrint.Common.LogsInputs" Version="5.29.0.13778" />
   </ItemGroup>
 
   <ItemGroup>
